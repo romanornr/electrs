@@ -104,7 +104,7 @@ struct BlockchainInfo {
     headers: u32,
     bestblockhash: String,
     pruned: bool,
-    initialblockdownload: bool,
+    //initialblockdownload: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -327,9 +327,9 @@ impl Daemon {
         };
         let network_info = daemon.getnetworkinfo()?;
         info!("{:?}", network_info);
-        if network_info.version < 16_00_00 {
+        if network_info.version < 15_00_00 {
             bail!(
-                "{} is not supported - please use bitcoind 0.16+",
+                "{} is not supported - please use viacoind 0.15+",
                 network_info.subversion,
             )
         }
@@ -338,13 +338,13 @@ impl Daemon {
         if blockchain_info.pruned {
             bail!("pruned node is not supported (use '-prune=0' bitcoind flag)".to_owned())
         }
-        loop {
-            if !daemon.getblockchaininfo()?.initialblockdownload {
-                break;
-            }
-            warn!("wait until bitcoind is synced (i.e. initialblockdownload = false)");
-            signal.wait(Duration::from_secs(3))?;
-        }
+        // loop {
+        //     if !daemon.getblockchaininfo()?.initialblockdownload {
+        //         break;
+        //     }
+        //     warn!("wait until bitcoind is synced (i.e. initialblockdownload = false)");
+        //     signal.wait(Duration::from_secs(3))?;
+        // }
         Ok(daemon)
     }
 
